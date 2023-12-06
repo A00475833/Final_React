@@ -90,6 +90,31 @@ const RegistrationPage = ({ onLoginClick }) => {
         password,
         confirmPassword,
       });
+      const userData = {
+        FirstName: name.split(" ")[0], // Assuming first part of the name is the first name
+        LastName: name.split(" ")[1] || "LastName", // Placeholder for last name
+        UserName: `test123`, // Creating a username from the name
+        Email: email,
+        PhoneNo: "123-456-7890", // Placeholder phone number
+        Address: "123 Main St", // Placeholder address
+        Password: password,
+      };
+      fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          // Handle success (e.g., show a success message or redirect)
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          // Handle errors (e.g., show an error message)
+        });
     } else {
       console.log("Validation errors");
     }

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./LoginPage.css";
+import axios from "axios";
 
 function LoginPage({ onRegisterClick }) {
   const [email, setEmail] = useState("");
@@ -40,14 +41,30 @@ function LoginPage({ onRegisterClick }) {
       );
     }
   };
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post("https://sid816.free.beeceptor.com", {
+        email,
+        password,
+      });
+      if (response.data.success) {
+        console.log("Success");
+      } else {
+        console.log("Incorrect");
+      }
+    } catch (error) {
+      console.error("Error during API call", error);
+    }
+  };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     validateEmail(email);
     validatePassword(password);
 
     if (email && password && !emailError && !passwordError) {
       console.log("Email:", email, "Password:", password);
+      await login(email, password);
       // Handle the login logic here
     } else {
       console.log("Validation errors");
