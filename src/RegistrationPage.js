@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./RegistrationPage.css";
 
+const registrationpage_url ='https://localhost:7278/api/Registration';  //stores the registration api url from .net core app
+
 const RegistrationPage = ({
   onLoginClick,
   onRegistrationSuccess,
@@ -129,7 +131,7 @@ const RegistrationPage = ({
         Address: address,
         Password: password,
       };
-      fetch("/api/register", {
+      fetch(registrationpage_url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
