@@ -3,9 +3,11 @@ import LoginPage from "./LoginPage";
 import RegistrationPage from "./RegistrationPage";
 import PaymentPage from "./PaymentPage";
 import HomePage from "./HomePage";
+import BookAppointment from "./BookAppointment"; // Make sure to import BookAppointment
 
 function App() {
-  const [currentPage, setCurrentPage] = useState("home");
+  // Set 'bookAppointment' as the initial page
+  const [currentPage, setCurrentPage] = useState("bookAppointment");
 
   const navigateTo = (page) => {
     setCurrentPage(page);
@@ -25,13 +27,15 @@ function App() {
           <RegistrationPage
             onLoginClick={() => navigateTo("login")}
             onRegistrationSuccess={() => navigateTo("bookAppointment")}
-            onHomeClick={() => navigateTo("home")} // Pass navigateTo function as a prop
+            onHomeClick={() => navigateTo("home")}
           />
         );
       case "login":
         return <LoginPage onRegisterClick={() => navigateTo("register")} />;
       case "payment":
         return <PaymentPage />;
+      case "bookAppointment": // Add this case
+        return <BookAppointment />;
       default:
         return (
           <HomePage
