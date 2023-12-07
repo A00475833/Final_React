@@ -1,20 +1,44 @@
 import React, { useState } from "react";
 import "./RegistrationPage.css";
 
-const RegistrationPage = ({ onLoginClick }) => {
-  const [name, setName] = useState("");
+const RegistrationPage = ({
+  onLoginClick,
+  onRegistrationSuccess,
+  onHomeClick,
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [phoneNo, setPhoneNo] = useState("");
+  const [address, setAddress] = useState("");
+  const [phoneNoError, setPhoneNoError] = useState("");
 
-  const handleNameChange = (event) => {
-    const newName = event.target.value;
-    setName(newName);
-    validateName(newName);
+  const handleFirstNameChange = (event) => {
+    setFirstName(event.target.value);
+  };
+
+  const handleLastNameChange = (event) => {
+    setLastName(event.target.value);
+  };
+
+  const handleUserNameChange = (event) => {
+    setUserName(event.target.value);
+  };
+
+  const handlePhoneNoChange = (event) => {
+    const newPhoneNo = event.target.value;
+    setPhoneNo(newPhoneNo);
+    validatePhoneNo(newPhoneNo);
+  };
+
+  const handleAddressChange = (event) => {
+    setAddress(event.target.value);
   };
 
   const handleEmailChange = (event) => {
@@ -35,8 +59,11 @@ const RegistrationPage = ({ onLoginClick }) => {
     validateConfirmPassword(newConfirmPassword);
   };
 
-  const validateName = (name) => {
-    setNameError(name ? "" : "Name is required");
+  const validatePhoneNo = (phoneNo) => {
+    const phoneNoRegex = /^[0-9]+$/;
+    setPhoneNoError(
+      phoneNoRegex.test(phoneNo) ? "" : "Phone number must be numeric"
+    );
   };
 
   const validateEmail = (email) => {
@@ -69,34 +96,37 @@ const RegistrationPage = ({ onLoginClick }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    validateName(name);
     validateEmail(email);
+    validatePhoneNo(phoneNo);
     validatePassword(password);
     validateConfirmPassword(confirmPassword);
 
     if (
-      name &&
+      firstName &&
+      lastName &&
+      phoneNo &&
+      userName &&
+      address &&
       email &&
       password &&
       confirmPassword &&
-      !nameError &&
+      !phoneNoError &&
       !emailError &&
       !passwordError &&
       !confirmPasswordError
     ) {
       console.log("User Registered:", {
-        name,
         email,
         password,
         confirmPassword,
       });
       const userData = {
-        FirstName: name.split(" ")[0], // Assuming first part of the name is the first name
-        LastName: name.split(" ")[1] || "LastName", // Placeholder for last name
-        UserName: `test123`, // Creating a username from the name
+        FirstName: firstName,
+        LastName: lastName,
+        UserName: userName,
         Email: email,
-        PhoneNo: "123-456-7890", // Placeholder phone number
-        Address: "123 Main St", // Placeholder address
+        PhoneNo: phoneNo,
+        Address: address,
         Password: password,
       };
       fetch("/api/register", {
@@ -109,14 +139,14 @@ const RegistrationPage = ({ onLoginClick }) => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:", data);
-          // Handle success (e.g., show a success message or redirect)
+          onRegistrationSuccess();
         })
         .catch((error) => {
           console.error("Error:", error);
-          // Handle errors (e.g., show an error message)
         });
     } else {
       console.log("Validation errors");
+      alert("Please Enter Correct Value!");
     }
   };
 
@@ -125,15 +155,55 @@ const RegistrationPage = ({ onLoginClick }) => {
       <form onSubmit={handleSubmit}>
         <h2>Register for Car Services</h2>
         <div>
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="first-name">First Name:</label>
           <input
             type="text"
-            id="name"
-            value={name}
-            onChange={handleNameChange}
+            id="first-name"
+            value={firstName}
+            onChange={handleFirstNameChange}
             required
           />
-          {nameError && <div className="error">{nameError}</div>}
+        </div>
+        <div>
+          <label htmlFor="last-name">Last Name:</label>
+          <input
+            type="text"
+            id="last-name"
+            value={lastName}
+            onChange={handleLastNameChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="user-name">User Name:</label>
+          <input
+            type="text"
+            id="user-name"
+            value={userName}
+            onChange={handleUserNameChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="phone-no">Phone No:</label>
+          <input
+            type="text"
+            id="phone-no"
+            value={phoneNo}
+            onChange={handlePhoneNoChange}
+            required
+          />
+          {phoneNoError && <div className="error">{phoneNoError}</div>}
+        </div>
+        <div>
+          <label htmlFor="address">Address:</label>
+          <input
+            type="text"
+            id="address"
+            value={address}
+            onChange={handleAddressChange}
+            required
+          />
         </div>
         <div>
           <label htmlFor="email">Email:</label>
@@ -176,6 +246,10 @@ const RegistrationPage = ({ onLoginClick }) => {
           <button type="button" onClick={onLoginClick}>
             Login here
           </button>
+          <button onClick={onHomeClick} className="back-to-home-button">
+            Back to Home
+          </button>{" "}
+          {/* New Back to Home button */}
         </p>
       </form>
     </div>
