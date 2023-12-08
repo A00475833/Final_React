@@ -4,12 +4,11 @@
 //Removed Address mentions as this field wont be used.  - Zaid-08_12
 //Added the fields for creating the user.
 
-
 import React, { useState } from "react";
 import "./RegistrationPage.css";
 import cookie from "js-cookie";
 
-const registrationpage_url ='https://localhost:7278/api/Registration';  //stores the registration api url from .net core app
+const registrationpage_url = "https://localhost:7278/api/Registration"; //stores the registration api url from .net core app
 
 const RegistrationPage = ({
   onLoginClick,
@@ -32,7 +31,6 @@ const RegistrationPage = ({
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
   const [postalCode, setPostalCode] = useState("");
-  
 
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
@@ -117,11 +115,13 @@ const RegistrationPage = ({
     if (!password) {
       setPasswordError("Password is required");
     } else {
-      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+      // Updated regex to include special character requirement
+      const passwordRegex =
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
       setPasswordError(
         passwordRegex.test(password)
           ? ""
-          : "Password must be at least 8 characters long, contain a number, a lowercase and an uppercase letter."
+          : "Password must be at least 8 characters long, contain a number, a lowercase and an uppercase letter, and a special character."
       );
     }
   };
@@ -146,7 +146,7 @@ const RegistrationPage = ({
       userName &&
       // address &&
       email &&
-      city  &&
+      city &&
       state &&
       country &&
       postalCode &&
@@ -168,10 +168,10 @@ const RegistrationPage = ({
         UserName: userName,
         Email: email,
         PhoneNo: phoneNo,
-        City:city,
-        State:state,
-        Country:country,
-        PostalCode:postalCode,
+        City: city,
+        State: state,
+        Country: country,
+        PostalCode: postalCode,
         // Address: address,
         Password: password,
       };
