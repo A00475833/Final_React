@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./LoginPage.css";
 import axios from "axios";
+import cookie from "js-cookie";
+import "./App";
 
-function LoginPage({ onRegisterClick }) {
+function LoginPage({ onRegisterClick, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -47,6 +49,8 @@ function LoginPage({ onRegisterClick }) {
         email,
         password,
       });
+      cookie.set("email", email);
+      onLoginSuccess();
       if (response.data.success) {
         console.log("Success");
       } else {

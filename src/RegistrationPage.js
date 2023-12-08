@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./RegistrationPage.css";
+import cookie from "js-cookie";
 
 const RegistrationPage = ({
   onLoginClick,
@@ -139,6 +140,7 @@ const RegistrationPage = ({
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:", data);
+          cookie.set("email", email);
           onRegistrationSuccess();
         })
         .catch((error) => {

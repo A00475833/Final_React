@@ -1,48 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LoginPage from "./LoginPage";
 import RegistrationPage from "./RegistrationPage";
 import PaymentPage from "./PaymentPage";
 import HomePage from "./HomePage";
-import BookAppointment from "./BookAppointment"; // Make sure to import BookAppointment
+import cookie from "js-cookie";
+import BookAppointment from "./BookAppointment";
 
 function App() {
-  // Set 'bookAppointment' as the initial page
-  const [currentPage, setCurrentPage] = useState("bookAppointment");
+  //Navi
+  const [currentPage, setCurrentPage] = useState("home");
 
-  const navigateTo = (page) => {
-    setCurrentPage(page);
+  const checkLoggedIn = () => {
+    return cookie.get("email") ? true : false;
   };
 
+  const navigateTo = (page) => {
+    if (checkLoggedIn() && (page === "login" || page === "register")) {
+      setCurrentPage("bookAppointment");
+    } else if (!checkLoggedIn() && page !== "login" && page !== "register") {
+      setCurrentPage("home");
+    } else {
+      setCurrentPage(page);
+    }
+  };
+
+  const onLoginSuccess = () => {
+    setCurrentPage("bookAppointment");
+  };
+
+  useEffect(() => {
+    if (checkLoggedIn()) {
+      setCurrentPage("bookAppointment");
+    }
+  }, []);
+
   const renderPage = () => {
-    switch (currentPage) {
-      case "home":
-        return (
-          <HomePage
-            onLoginClick={() => navigateTo("login")}
-            onRegisterClick={() => navigateTo("register")}
-          />
-        );
-      case "register":
-        return (
-          <RegistrationPage
-            onLoginClick={() => navigateTo("login")}
-            onRegistrationSuccess={() => navigateTo("bookAppointment")}
-            onHomeClick={() => navigateTo("home")}
-          />
-        );
-      case "login":
-        return <LoginPage onRegisterClick={() => navigateTo("register")} />;
-      case "payment":
-        return <PaymentPage />;
-      case "bookAppointment": // Add this case
-        return <BookAppointment />;
-      default:
-        return (
-          <HomePage
-            onLoginClick={() => navigateTo("login")}
-            onRegisterClick={() => navigateTo("register")}
-          />
-        );
+    if (checkLoggedIn()) {
+      switch (currentPage) {
+        case "bookAppointment":
+          return <BookAppointment />;
+        case "payment":
+          return <PaymentPage />;
+
+        default:
+          return <BookAppointment />;
+      }
+    } else {
+      switch (currentPage) {
+        case "home":
+          return (
+            <HomePage
+              onLoginClick={() => navigateTo("login")}
+              onRegisterClick={() => navigateTo("register")}
+            />
+          );
+        case "login":
+          return (
+            <LoginPage
+              onRegisterClick={() => navigateTo("register")}
+              onLoginSuccess={onLoginSuccess}
+            />
+          );
+        case "register":
+          return (
+            <RegistrationPage
+              onLoginClick={() => navigateTo("login")}
+              onRegistrationSuccess={onLoginSuccess}
+            />
+          );
+        default:
+          return (
+            <HomePage
+              onLoginClick={() => navigateTo("login")}
+              onRegisterClick={() => navigateTo("register")}
+            />
+          );
+      }
     }
   };
 
