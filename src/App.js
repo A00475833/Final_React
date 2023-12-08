@@ -7,21 +7,23 @@ import cookie from "js-cookie";
 import BookAppointment from "./BookAppointment";
 
 function App() {
-  //Navi
-  const [currentPage, setCurrentPage] = useState("home");
+  const [currentPage, setCurrentPage] = useState("bookAppointment");
 
   const checkLoggedIn = () => {
     return cookie.get("email") ? true : false;
   };
 
+  const onLogout = () => {
+    cookie.remove("email"); // Clear the cookie on logout
+    setCurrentPage("home"); // Navigate to home after logout
+  };
+
+  const onHomeClick = () => {
+    setCurrentPage("home"); // Navigate to the home page
+  };
+
   const navigateTo = (page) => {
-    if (checkLoggedIn() && (page === "login" || page === "register")) {
-      setCurrentPage("bookAppointment");
-    } else if (!checkLoggedIn() && page !== "login" && page !== "register") {
-      setCurrentPage("home");
-    } else {
-      setCurrentPage(page);
-    }
+    setCurrentPage(page); // Allow direct navigation to any page
   };
 
   const onLoginSuccess = () => {
@@ -29,53 +31,39 @@ function App() {
   };
 
   useEffect(() => {
-    if (checkLoggedIn()) {
-      setCurrentPage("bookAppointment");
-    }
+    // On initial load, navigate to the appropriate page based on login status
+    setCurrentPage(checkLoggedIn() ? "bookAppointment" : "home");
   }, []);
 
   const renderPage = () => {
-    if (checkLoggedIn()) {
-      switch (currentPage) {
-        case "bookAppointment":
-          return <BookAppointment />;
-        case "payment":
-          return <PaymentPage />;
-
-        default:
-          return <BookAppointment />;
-      }
-    } else {
-      switch (currentPage) {
-        case "home":
-          return (
-            <HomePage
-              onLoginClick={() => navigateTo("login")}
-              onRegisterClick={() => navigateTo("register")}
-            />
-          );
-        case "login":
-          return (
-            <LoginPage
-              onRegisterClick={() => navigateTo("register")}
-              onLoginSuccess={onLoginSuccess}
-            />
-          );
-        case "register":
-          return (
-            <RegistrationPage
-              onLoginClick={() => navigateTo("login")}
-              onRegistrationSuccess={onLoginSuccess}
-            />
-          );
-        default:
-          return (
-            <HomePage
-              onLoginClick={() => navigateTo("login")}
-              onRegisterClick={() => navigateTo("register")}
-            />
-          );
-      }
+    switch (currentPage) {
+      case "bookAppointment":
+        return <BookAppointment onLogout={onLogout} />;
+      case "payment":
+        return <PaymentPage />;
+      case "login":
+        return (
+          <LoginPage
+            onRegisterClick={() => navigateTo("register")}
+            onLoginSuccess={onLoginSuccess}
+          />
+        );
+      case "register":
+        return (
+          <RegistrationPage
+            onLoginClick={() => navigateTo("login")}
+            onRegistrationSuccess={onLoginSuccess}
+            onHomeClick={onHomeClick}
+          />
+        );
+      case "home":
+      default:
+        return (
+          <HomePage
+            onLoginClick={() => navigateTo("login")}
+            onRegisterClick={() => navigateTo("register")}
+          />
+        );
     }
   };
 

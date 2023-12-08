@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./BookAppointment.css";
 import cookie from "js-cookie";
 
-const BookAppointment = () => {
+const BookAppointment = ({ onLogout }) => {
   const [serviceType, setServiceType] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [checkInTime, setCheckInTime] = useState("");
@@ -14,6 +14,11 @@ const BookAppointment = () => {
     const userEmail = cookie.get("email"); // Retrieve the email from the cookie
     setEmail(userEmail); // Set the email in the state
   }, []);
+
+  const handleLogout = () => {
+    cookie.remove("email");
+    onLogout(); // Navigate to the home page after logging out
+  };
 
   const handleServiceTypeChange = (event) => {
     setServiceType(event.target.value);
@@ -111,6 +116,9 @@ const BookAppointment = () => {
 
         <button type="submit">Book Appointment</button>
       </form>
+      <button onClick={handleLogout} className="logout-button">
+        Logout
+      </button>
     </div>
   );
 };
