@@ -19,7 +19,9 @@ const PaymentPage = () => {
     const canadaPostalCodeRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
     const usZipCodeRegex = /^\d{5}(-\d{4})?$/;
     const phoneNumberRegex = /^[2-9]\d{2}[2-9]\d{2}\d{4}$/;
-    const creditCardRegex = /^4[0-9]{15}|^5[1-5][0-9]{14}|^3[47][0-9]{13}$/;
+    const masterCardRegex = /^5[1-5][0-9]{14}$/;
+    const visaRegex = /^4[0-9]{15}$/;
+    const amexRegex = /^3[47][0-9]{13}$/;
 
     if (
       !nameRegex.test(firstName) ||
@@ -48,12 +50,23 @@ const PaymentPage = () => {
       alert("Invalid email address.");
       return false;
     }
-    if (!creditCardRegex.test(cardNumber)) {
+    if (
+      !masterCardRegex.test(cardNumber) &&
+      !visaRegex.test(cardNumber) &&
+      !amexRegex.test(cardNumber)
+    ) {
       alert("Invalid credit card number.");
       return false;
     }
     if (!expiryDate.match(/^(0[1-9]|1[0-2])\/20(1[6-9]|2[0-3])$/)) {
       alert("Invalid expiry date. Use MM/YYYY format.");
+      return false;
+    }
+    if (
+      (amexRegex.test(cardNumber) && cvv.length !== 4) ||
+      (!amexRegex.test(cardNumber) && cvv.length !== 3)
+    ) {
+      alert("Invalid CVV.");
       return false;
     }
     return true;
@@ -77,6 +90,7 @@ const PaymentPage = () => {
     });
     alert("Payment processing is not implemented.");
   };
+
   const handleCardNumberChange = (event) => {
     setCardNumber(event.target.value);
   };

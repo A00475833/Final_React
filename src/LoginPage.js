@@ -45,14 +45,14 @@ function LoginPage({ onRegisterClick, onLoginSuccess }) {
   };
   const login = async (email, password) => {
     try {
-      const response = await axios.post("https://sid816.free.beeceptor.com", {
+      const response = await axios.post("", {
         email,
         password,
       });
-      cookie.set("email", email);
-      onLoginSuccess();
       if (response.data.success) {
         console.log("Success");
+        cookie.set("email", email);
+        onLoginSuccess();
       } else {
         console.log("Incorrect");
       }

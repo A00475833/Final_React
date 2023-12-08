@@ -115,10 +115,10 @@ const BookAppointment = ({ onLogout }) => {
         {error && <div className="error-message">{error}</div>}
 
         <button type="submit">Book Appointment</button>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
       </form>
-      <button onClick={handleLogout} className="logout-button">
-        Logout
-      </button>
     </div>
   );
 };
