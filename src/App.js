@@ -5,6 +5,8 @@ import PaymentPage from "./PaymentPage";
 import HomePage from "./HomePage";
 import cookie from "js-cookie";
 import BookAppointment from "./BookAppointment";
+import ConfirmedPage from "./ConfirmPage";
+
 
 function App() {
   const [currentPage, setCurrentPage] = useState("bookAppointment");
