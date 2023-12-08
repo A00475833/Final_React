@@ -35,14 +35,17 @@ function LoginPage({ onRegisterClick, onLoginSuccess }) {
     if (!password) {
       setPasswordError("Password is required");
     } else {
-      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+      // Updated regex to include special character requirement
+      const passwordRegex =
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
       setPasswordError(
         passwordRegex.test(password)
           ? ""
-          : "Password must be at least 8 characters long, contain a number, a lowercase and an uppercase letter."
+          : "Password must be at least 8 characters long, contain a number, a lowercase and an uppercase letter, and a special character."
       );
     }
   };
+
   const login = async (email, password) => {
     try {
       const response = await axios.post("", {
