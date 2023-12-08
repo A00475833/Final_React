@@ -1,3 +1,10 @@
+//Registration Page component- will be used to take user to registration page.
+//Change logs:
+//Change-Developer-date:--
+//Removed Address mentions as this field wont be used.  - Zaid-08_12
+//Added the fields for creating the user.
+
+
 import React, { useState } from "react";
 import "./RegistrationPage.css";
 import cookie from "js-cookie";
@@ -19,8 +26,13 @@ const RegistrationPage = ({
   const [lastName, setLastName] = useState("");
   const [userName, setUserName] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
-  const [address, setAddress] = useState("");
+  //const [address, setAddress] = useState("");
   const [phoneNoError, setPhoneNoError] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  
 
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
@@ -40,15 +52,38 @@ const RegistrationPage = ({
     validatePhoneNo(newPhoneNo);
   };
 
-  const handleAddressChange = (event) => {
-    setAddress(event.target.value);
-  };
+  // const handleAddressChange = (event) => {
+  //   setAddress(event.target.value);
+  // };
 
   const handleEmailChange = (event) => {
     const newEmail = event.target.value;
     setEmail(newEmail);
     validateEmail(newEmail);
   };
+
+  //Changes for adding new fields to User
+  const handleCityChange = (event) => {
+    const newCity = event.target.value;
+    setCity(newCity);
+    //validatePhoneNo(newCity);
+  };
+  const handleStateChange = (event) => {
+    const newState = event.target.value;
+    setState(newState);
+    //validatePhoneNo(newState);
+  };
+  const handleCountryChange = (event) => {
+    const newCountry = event.target.value;
+    setCountry(newCountry);
+    //validatePhoneNo(newCountry);
+  };
+  const handlePostalCodeChange = (event) => {
+    const newPostalCode = event.target.value;
+    setPostalCode(newPostalCode);
+    //validatePhoneNo(newPostalCode);
+  };
+  //code end for new fields
 
   const handlePasswordChange = (event) => {
     const newPassword = event.target.value;
@@ -109,8 +144,12 @@ const RegistrationPage = ({
       lastName &&
       phoneNo &&
       userName &&
-      address &&
+      // address &&
       email &&
+      city  &&
+      state &&
+      country &&
+      postalCode &&
       password &&
       confirmPassword &&
       !phoneNoError &&
@@ -129,7 +168,11 @@ const RegistrationPage = ({
         UserName: userName,
         Email: email,
         PhoneNo: phoneNo,
-        Address: address,
+        City:city,
+        State:state,
+        Country:country,
+        PostalCode:postalCode,
+        // Address: address,
         Password: password,
       };
       fetch(registrationpage_url, {
@@ -188,6 +231,7 @@ const RegistrationPage = ({
             required
           />
         </div>
+        {/* Addedbelow codes for new fields input- not putting validations for now */}
         <div>
           <label htmlFor="phone-no">Phone No:</label>
           <input
@@ -197,9 +241,43 @@ const RegistrationPage = ({
             onChange={handlePhoneNoChange}
             required
           />
-          {phoneNoError && <div className="error">{phoneNoError}</div>}
+          {/* {phoneNoError && <div className="error">{phoneNoError}</div>} */}
         </div>
         <div>
+          <label htmlFor="state">State:</label>
+          <input
+            type="text"
+            id="state"
+            value={state}
+            onChange={handleStateChange}
+            required
+          />
+          {/* {phoneNoError && <div className="error">{phoneNoError}</div>} */}
+        </div>
+        <div>
+          <label htmlFor="country">Country:</label>
+          <input
+            type="text"
+            id="country"
+            value={country}
+            onChange={handleCountryChange}
+            required
+          />
+          {/* {phoneNoError && <div className="error">{phoneNoError}</div>} */}
+        </div>
+        <div>
+          <label htmlFor="postal-code">Postal Code:</label>
+          <input
+            type="text"
+            id="postal-code"
+            value={postalCode}
+            onChange={handlePostalCodeChange}
+            required
+          />
+          {/* {phoneNoError && <div className="error">{phoneNoError}</div>} */}
+        </div>
+        {/* new code end */}
+        {/* <div>
           <label htmlFor="address">Address:</label>
           <input
             type="text"
@@ -208,6 +286,17 @@ const RegistrationPage = ({
             onChange={handleAddressChange}
             required
           />
+        </div> */}
+        <div>
+          <label htmlFor="city">City:</label>
+          <input
+            type="text"
+            id="city"
+            value={city}
+            onChange={handleCityChange}
+            required
+          />
+          {/* {phoneNoError && <div className="error">{phoneNoError}</div>} */}
         </div>
         <div>
           <label htmlFor="email">Email:</label>
