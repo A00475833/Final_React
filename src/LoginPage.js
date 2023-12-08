@@ -48,11 +48,12 @@ function LoginPage({ onRegisterClick, onLoginSuccess }) {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post("", {
-        email,
-        password,
+      const response = await axios.post("https://localhost:7278/api/Registration/CheckUser", {
+        Email:email,
+        Password:password
       });
-      if (response.data.success) {
+      console.log(response);
+      if (response.status === 200) {
         console.log("Success");
         cookie.set("email", email);
         onLoginSuccess();
