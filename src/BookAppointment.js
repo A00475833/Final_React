@@ -2,76 +2,109 @@ import React, { useState, useEffect } from "react";
 import "./BookAppointment.css";
 import cookie from "js-cookie";
 
-const BookAppointment = ({ onLogout }) => {
+const BookAppointment = ({ onLogout, onBookSuccess }) => {
   const [serviceType, setServiceType] = useState("");
+  const [branchName, setBranchName] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [checkInTime, setCheckInTime] = useState("");
-  const [checkOutTime, setCheckOutTime] = useState("");
-  const [email, setEmail] = useState(""); // State to store the email
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const userEmail = cookie.get("email"); // Retrieve the email from the cookie
-    setEmail(userEmail); // Set the email in the state
+    const userEmail = cookie.get("email");
+    setEmail(userEmail);
   }, []);
 
   const handleLogout = () => {
     cookie.remove("email");
-    onLogout(); // Navigate to the home page after logging out
+    onLogout();
   };
 
   const handleServiceTypeChange = (event) => {
     setServiceType(event.target.value);
   };
 
+  const handleBranchNameChange = (event) => {
+    setBranchName(event.target.value);
+  };
+
   const handleDateChange = (event) => {
     setAppointmentDate(event.target.value);
-    setError(""); // Clear error message when date changes
+    setError("");
   };
 
   const handleCheckInTimeChange = (event) => {
     setCheckInTime(event.target.value);
-    setError(""); // Clear error message when time changes
+    setError("");
   };
 
-  const handleCheckOutTimeChange = (event) => {
-    setCheckOutTime(event.target.value);
-    setError(""); // Clear error message when time changes
-  };
-
-  const validateTimes = () => {
-    if (appointmentDate && checkInTime && checkOutTime) {
-      const startTime = new Date(appointmentDate + " " + checkInTime);
-      const endTime = new Date(appointmentDate + " " + checkOutTime);
-      return endTime > startTime;
+  const validateDateTime = () => {
+    if (appointmentDate && checkInTime) {
+      const appointmentDateTime = new Date(appointmentDate + " " + checkInTime);
+      const currentDateTime = new Date();
+      return appointmentDateTime > currentDateTime;
     }
     return false;
   };
 
-  const handleSubmit = (event) => {
+  const mapBranchNameToId = (branchName) => {
+    const branchMap = {
+      Barrington: 31,
+      "Spring Garden": 32,
+      Bedford: 33,
+      Darthmouth: 34,
+      Mumford: 35,
+    };
+    return branchMap[branchName] || 0;
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!validateTimes()) {
-      setError("Check-out time must be later than check-in time.");
+
+    if (!validateDateTime()) {
+      setError("Check-in date and time must be in the future.");
       return;
     }
 
-    console.log("Booking Details:", {
-      serviceType,
-      appointmentDate,
-      checkInTime,
-      checkOutTime,
-    });
+    const branchId = mapBranchNameToId(branchName);
+    const appointmentDateTime = new Date(`${appointmentDate}T${checkInTime}`);
 
-    // Add logic to send data to your backend or other processing
-    setError(""); // Clear any previous error
+    const appointmentData = {
+      AppointType: serviceType,
+      AppointmentDate: appointmentDateTime.toISOString(),
+      AppointmentTime: `${checkInTime}:00`, // Adjust this format as needed for your backend
+      BranchId: branchId,
+    };
+
+    try {
+      const response = await fetch("https://localhost:7278/api/Appointment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Include any other headers your API requires
+        },
+        body: JSON.stringify(appointmentData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      // Handle the response data as needed
+      onBookSuccess();
+      console.log("Appointment booked successfully");
+      // Reset form or navigate user as needed
+    } catch (error) {
+      console.error("Failed to book appointment:", error);
+      setError("Failed to book appointment, please try again.");
+    }
   };
 
   return (
     <div className="appointment-container">
       <h2>Book Your Car Service Appointment</h2>
-      {email && <p>Logged in as: {email}</p>} {/* Display the email */}
+      {email && <p>Logged in as: {email}</p>}
       <form onSubmit={handleSubmit}>
-        {/* Form fields and submit button */}
         <label htmlFor="serviceType">Service Type:</label>
         <select
           id="serviceType"
@@ -83,6 +116,21 @@ const BookAppointment = ({ onLogout }) => {
           <option value="oil-change">Oil Change</option>
           <option value="tire-rotation">Tire Rotation</option>
           <option value="general-inspection">General Inspection</option>
+        </select>
+
+        <label htmlFor="branchName">Branch Name:</label>
+        <select
+          id="branchName"
+          value={branchName}
+          onChange={handleBranchNameChange}
+          required
+        >
+          <option value="">Select a Branch</option>
+          <option value="Barrington">Barrington</option>
+          <option value="Spring Garden">Spring Garden</option>
+          <option value="Bedford">Bedford</option>
+          <option value="Darthmouth">Darthmouth</option>
+          <option value="Mumford">Mumford</option>
         </select>
 
         <label htmlFor="appointmentDate">Date:</label>
@@ -100,15 +148,6 @@ const BookAppointment = ({ onLogout }) => {
           id="checkInTime"
           value={checkInTime}
           onChange={handleCheckInTimeChange}
-          required
-        />
-
-        <label htmlFor="checkOutTime">Check-Out Time:</label>
-        <input
-          type="time"
-          id="checkOutTime"
-          value={checkOutTime}
-          onChange={handleCheckOutTimeChange}
           required
         />
 

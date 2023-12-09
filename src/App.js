@@ -7,7 +7,6 @@ import cookie from "js-cookie";
 import BookAppointment from "./BookAppointment";
 import ConfirmedPage from "./ConfirmPage";
 
-
 function App() {
   const [currentPage, setCurrentPage] = useState("bookAppointment");
 
@@ -15,6 +14,9 @@ function App() {
     return cookie.get("email") ? true : false;
   };
 
+  const navigateToPayment = () => {
+    setCurrentPage("payment");
+  };
   const onLogout = () => {
     cookie.remove("email"); // Clear the cookie on logout
     setCurrentPage("home"); // Navigate to home after logout
@@ -33,14 +35,18 @@ function App() {
   };
 
   useEffect(() => {
-    // On initial load, navigate to the appropriate page based on login status
     setCurrentPage(checkLoggedIn() ? "bookAppointment" : "home");
   }, []);
 
   const renderPage = () => {
     switch (currentPage) {
       case "bookAppointment":
-        return <BookAppointment onLogout={onLogout} />;
+        return (
+          <BookAppointment
+            onLogout={onLogout}
+            onBookSuccess={navigateToPayment}
+          />
+        );
       case "payment":
         return <PaymentPage />;
       case "login":
